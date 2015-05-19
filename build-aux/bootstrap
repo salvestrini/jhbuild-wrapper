@@ -31,9 +31,10 @@ echo "${ME}: Checking out version $JHBUILD_VERSION"
     echo "${ME}: Cannot stitch to version $JHBUILD_VERSION"
     exit 1
 }
-    
+
 echo "${ME}: Building"
-(cd $JHBUILD_BUILDDIR && ./autogen.sh --prefix=../env && make install) || {
+(cd $JHBUILD_BUILDDIR &&                                        \
+ ./autogen.sh --prefix=`pwd`/../env && make install) || {
     echo "${ME}: Cannot build jhbuild ..."
     exit 1
 }
