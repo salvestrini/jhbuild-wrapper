@@ -1,0 +1,41 @@
+#!/bin/bash
+
+ME="build-aux/bootstrap"
+
+#JHBUILD_VERSION=3.5.91
+JHBUILD_VERSION=3.15.92
+JHBUILD_URL=https://github.com/GNOME/jhbuild.git
+#JHBUILD_URL=git@github.com:GNOME/jhbuild.git
+JHBUILD_BUILDDIR=jhbuild
+
+echo "${ME}: Cleaning up from previous (broken?) executions"
+rm -r -f env
+
+echo "${ME}: Setting up git sub-repository"
+if test -d $JHBUILD_BUILDDIR ; then
+    if test ! -e $JHBUILD_BUILDDIR/.git ; then
+        echo "${ME}: Something strange happened, bailing out ..."
+        exit 1
+    fi
+else
+    echo "${ME}: Cloning from scratch"
+    rm -r -f $JHBUILD_BUILDDIR
+    (git clone  $JHBUILD_URL $JHBUILD_BUILDDIR) || {
+	echo "${ME}: Cannot clone jhbuild from $JHBUILD_URL"
+	exit 1
+    }
+fi
+
+echo "${ME}: Checking out version $JHBUILD_VERSION"
+(cd $JHBUILD_BUILDDIR && git checkout $JHBUILD_VERSION) || {
+    echo "${ME}: Cannot stitch to version $JHBUILD_VERSION"
+    exit 1
+}
+    
+echo "${ME}: Building"
+(cd $JHBUILD_BUILDDIR && ./autogen.sh --prefix=../env && make install) || {
+    echo "${ME}: Cannot build jhbuild ..."
+    exit 1
+}
+
+echo "${ME}: Done"

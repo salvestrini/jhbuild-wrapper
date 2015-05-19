@@ -1,0 +1,34 @@
+#!/bin/bash
+
+ME="bootstrap"
+
+# Bootstrapping children first
+for i in `find ./ -mindepth 2 -name "bootstrap"` ; do
+    if test -x $i ; then
+        bootstrap_dir=`dirname $i`
+        echo "${ME}: Bootstrapping directory \`$bootstrap_dir'"
+        (cd $bootstrap_dir && ./bootstrap) || {
+            echo "${ME}: Cannot bootstrap directory \`$bootstrap_dir'"
+            exit 1
+        }
+    fi
+done
+
+# Bootstrapping this directory
+bootstrap_dir=.
+echo "${ME}: Bootstrapping directory \`$bootstrap_dir'"
+
+rm -f jhbuild-wrapper
+cat jhbuild-wrapper.in |                        \
+    sed -e 's|@PWD[@]|'$PWD'|g'                 \
+     > jhbuild-wrapper || {
+    echo "${ME}: Cannot apply transformation"
+    exit 1
+}
+
+chmod u+x jhbuild-wrapper && chmod a-w jhbuild-wrapper || {                 
+    echo "${ME}: Cannot complete bootstrap" 
+    exit 1                                     
+}
+
+echo "${ME}: Done"

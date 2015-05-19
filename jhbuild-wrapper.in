@@ -1,0 +1,23 @@
+#!/bin/sh
+
+ME="jhbuild-wrapper"
+
+JHBUILD_BIN=@PWD@/build-aux/env/bin/jhbuild
+
+JHBUILD_RC=@PWD@/.jhbuild-rc.cfg
+JHBUILD_MODS=@PWD@/.jhbuild-modules.cfg
+
+if test ! -e $JHBUILD_RC ; then
+    echo "${ME}: Missing RC file"
+    exit 1
+fi
+
+if test ! -e $JHBUILD_MODS ; then
+    echo "${ME}: Missing MODS file"
+    exit 1
+fi
+
+echo "${ME}: RC      = \`$JHBUILD_RC'"
+echo "${ME}: Modules = \`$JHBUILD_MODS'"
+
+$JHBUILD_BIN -f $JHBUILD_RC -m $JHBUILD_MODS $@
