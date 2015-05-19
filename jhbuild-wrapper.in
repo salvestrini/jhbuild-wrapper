@@ -4,8 +4,10 @@ ME="jhbuild-wrapper"
 
 JHBUILD_BIN=@PWD@/build-aux/env/bin/jhbuild
 
-JHBUILD_RC=@PWD@/.jhbuild-rc.cfg
-JHBUILD_MODS=@PWD@/.jhbuild-modules.cfg
+JHBUILD_RC=.jhbuild-rc.cfg
+#JHBUILD_RC=@PWD@/.jhbuild-rc.cfg
+JHBUILD_MODS=.jhbuild-modules.cfg
+#JHBUILD_MODS=@PWD@/.jhbuild-modules.cfg
 
 if test ! -e $JHBUILD_RC ; then
     echo "${ME}: Missing RC file"
