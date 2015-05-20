@@ -33,8 +33,11 @@ echo "${ME}: Checking out version $JHBUILD_VERSION"
 }
 
 echo "${ME}: Building"
+#JHBUILD_AUTOGEN_OPTS=""
+JHBUILD_AUTOGEN_OPTS="--simple-install"
+
 (cd $JHBUILD_BUILDDIR &&                                        \
- ./autogen.sh --prefix=`pwd`/../env && make install) || {
+ ./autogen.sh $JHBUILD_AUTOGEN_OPTS --prefix=`pwd`/../env && make install) || {
     echo "${ME}: Cannot build jhbuild ..."
     exit 1
 }

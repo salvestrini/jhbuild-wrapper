@@ -1,25 +1,102 @@
-#!/bin/sh
+#!@PYTHON@
 
-ME="jhbuild-wrapper"
+#
+# Written by:
+#
+#   Francesco Salvestrini
+#
 
-JHBUILD_BIN=@PWD@/build-aux/env/bin/jhbuild
+import os
+import sys
+import ConfigParser
+import subprocess
 
-JHBUILD_RC=.jhbuild-rc.cfg
-#JHBUILD_RC=@PWD@/.jhbuild-rc.cfg
-JHBUILD_MODS=.jhbuild-modules.cfg
-#JHBUILD_MODS=@PWD@/.jhbuild-modules.cfg
+me                 = "jhbuild-wrapper"
+configuration_file = "." + me + ".cfg"
+#mode_debug         = True
+mode_debug         = False
 
-if test ! -e $JHBUILD_RC ; then
-    echo "${ME}: Missing RC file"
-    exit 1
-fi
+def log_error(s):
+    print(me + ": " + s)
 
-if test ! -e $JHBUILD_MODS ; then
-    echo "${ME}: Missing MODS file"
-    exit 1
-fi
+def log_debug(s):
+    if (mode_debug):
+        print(me + ": " + s)
 
-echo "${ME}: RC      = \`$JHBUILD_RC'"
-echo "${ME}: Modules = \`$JHBUILD_MODS'"
+#
+# Example configuration file (i.e. '.jhbuild-wrapper.cfg')
+#
+#[jhbuild]
+#configuration = .jhbuild.cfg
+#modules       = .jhbuild.mod
 
-$JHBUILD_BIN -f $JHBUILD_RC -m $JHBUILD_MODS $@
+#
+# Main
+#
+
+def core(args):
+    log_debug("Arguments = " + str(args))
+    if (len(args) > 0):
+        if (args[0] == "-d"):
+           global mode_debug
+           mode_debug = True
+           log_debug("Debugging mode enabled")
+           args.pop(0)
+    jhbuild_arguments = args
+    log_debug("Updated arguments = " + str(args))
+
+    log_debug("Looking for '" + configuration_file + "'")
+
+    if (not os.path.exists(configuration_file)):
+        log_error("Configuration file " +
+                  "'" + configuration_file + "' does not exist")
+        return -1
+
+    log_debug("Opening configuration file '" + configuration_file + "'")
+    c = ConfigParser.SafeConfigParser()
+    c.read(configuration_file)
+
+    log_debug("Now accessing configuration");
+
+    jhbuild_configuration = c.get("jhbuild", "configuration")
+    if (not os.path.exists(jhbuild_configuration)):
+        log_error("JHBuild configuration file " +
+                "'" + jhbuild_configuration + "' " +
+                  "file is missing")
+        return -1
+    log_debug("JHBuild configuration file is " +
+              "'" + jhbuild_configuration + "'")
+
+    jhbuild_modules = c.get("jhbuild", "modules")
+    if (not os.path.exists(jhbuild_modules)):
+        log_error("JHBuild modules file " +
+                  "'" + jhbuild_modules + "' " +
+                  "file is missing")
+        return -1
+    log_debug("JHBuild modules file is '" + jhbuild_modules + "'")
+
+    command = [ "@JHBUILD@",
+                "-f", jhbuild_configuration,
+                "-m", jhbuild_modules ] + jhbuild_arguments
+
+    log_debug("Going to run command '" + str(command) + "'")
+
+    retval = subprocess.call(command)
+
+    log_debug("Got return value " + str(retval))
+
+    return retval
+
+#
+# Main
+#
+
+retval = None
+try:
+    sys.argv.pop(0)
+    retval = core(sys.argv)
+except Exception, e:
+    log_error("Got error: " + str(e))
+    retval = 1
+
+sys.exit(retval)

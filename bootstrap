@@ -18,10 +18,15 @@ done
 bootstrap_dir=.
 echo "${ME}: Bootstrapping directory \`$bootstrap_dir'"
 
+PYTHON=`which python`
+JHBUILD=`pwd`/build-aux/env/bin/jhbuild
+
 rm -f jhbuild-wrapper
 cat jhbuild-wrapper.in |                        \
     sed -e 's|@PWD[@]|'$PWD'|g'                 \
-     > jhbuild-wrapper || {
+        -e 's|@PYTHON[@]|'$PYTHON'|g'           \
+        -e 's|@JHBUILD[@]|'$JHBUILD'|g'         \
+        > jhbuild-wrapper || {
     echo "${ME}: Cannot apply transformation"
     exit 1
 }
