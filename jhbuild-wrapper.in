@@ -6,22 +6,32 @@
 #   Francesco Salvestrini
 #
 
-import os
+me  = "jhbuild-wrapper"
+tag = me + ": "
+
 import sys
+import string
+
+if (sys.version_info[0] < 3):
+    print(tag + "Python version is " +
+          '.'.join(str(x) for x in sys.version_info[0:2]) +
+          ", I require >= v3.0")
+    sys.exit(1)
+
+import os
 import configparser
 import subprocess
 
-me                 = "jhbuild-wrapper"
 configuration_file = "." + me + ".cfg"
 #mode_debug         = True
 mode_debug         = False
 
 def log_error(s):
-    print(me + ": " + s)
+    print(tag + s)
 
 def log_debug(s):
     if (mode_debug):
-        print(me + ": " + s)
+        print(tag + s)
 
 #
 # Example configuration file (i.e. '.jhbuild-wrapper.cfg')
