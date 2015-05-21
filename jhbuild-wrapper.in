@@ -8,7 +8,7 @@
 
 import os
 import sys
-import ConfigParser
+import configparser
 import subprocess
 
 me                 = "jhbuild-wrapper"
@@ -53,7 +53,7 @@ def core(args):
         return -1
 
     log_debug("Opening configuration file '" + configuration_file + "'")
-    c = ConfigParser.SafeConfigParser()
+    c = configparser.SafeConfigParser()
     c.read(configuration_file)
 
     log_debug("Now accessing configuration");
@@ -95,7 +95,7 @@ retval = None
 try:
     sys.argv.pop(0)
     retval = core(sys.argv)
-except Exception, e:
+except Exception as e:
     log_error("Got error: " + str(e))
     retval = 1
 
