@@ -4,8 +4,11 @@ ME="build-aux/bootstrap"
 
 #JHBUILD_VERSION=3.5.91
 JHBUILD_VERSION=3.15.92
+#JHBUILD_VERSION=master
+
 JHBUILD_URL=https://github.com/GNOME/jhbuild.git
 #JHBUILD_URL=git@github.com:GNOME/jhbuild.git
+
 JHBUILD_BUILDDIR=jhbuild
 
 echo "${ME}: Cleaning up from previous (broken?) executions"
